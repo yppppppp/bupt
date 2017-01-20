@@ -1,0 +1,662 @@
+#include "U8glib.h"
+
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);  // HW SPI Com: CS = 10, A0 = 9 (Hardware Pins are  SCK = 13 and MOSI = 11)
+
+//static unsigned char u8g_logo_bits[] = {
+static unsigned char u8g_logo_bits1[] U8G_PROGMEM = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0xFF, 0xFF, 0x7F, 0xFC, 0xFF,
+  0xFF, 0x7E, 0xFE, 0xFF, 0xFF, 0x78, 0xFE, 0xFF, 0x7F, 0x7C, 0xFE, 0xFF, 0x7F, 0x7E, 0xFE, 0xFF,
+  0x7F, 0x7E, 0xFE, 0xFF, 0x3F, 0x7F, 0xFE, 0xF9, 0x3F, 0x00, 0x00, 0xF0, 0xBF, 0x7F, 0xFE, 0xFF,
+  0x9F, 0x7F, 0xFE, 0xFF, 0xDF, 0x7F, 0xFE, 0xFF, 0xEF, 0x7F, 0xFE, 0xFF, 0xEF, 0x7F, 0xFE, 0xFF,
+  0xF7, 0x7F, 0xFE, 0xFE, 0xFB, 0x7F, 0x7E, 0xFC, 0x3F, 0x00, 0x00, 0xFC, 0xFF, 0x7F, 0xFE, 0xFF,
+  0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF,
+  0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF, 0xFF, 0x7F, 0xFE, 0xE7,
+  0x03, 0x00, 0x00, 0xC0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static unsigned char u8g_logo_bits2[] U8G_PROGMEM = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0xFF, 0xFE,
+  0x7F, 0x00, 0x00, 0xFC, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0x00, 0x00, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0x00, 0x00, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE,
+  0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFF, 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static unsigned char u8g_logo_bits3[] U8G_PROGMEM = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xBF, 0xFF, 0xFD, 0xFF, 0x3F, 0xFE, 0xF1, 0xFF,
+  0x3F, 0xFF, 0xF9, 0xFF, 0x3F, 0xFF, 0xF9, 0xFF, 0x3F, 0xFF, 0xF9, 0xFF, 0x3F, 0xFF, 0xF9, 0xFD,
+  0x3F, 0x0F, 0x00, 0xF0, 0x3F, 0xFE, 0xF9, 0xF9, 0x3F, 0xF9, 0xF9, 0xF9, 0x3F, 0xF3, 0xF9, 0xF9,
+  0x27, 0xF3, 0xF9, 0xF9, 0x27, 0xF7, 0xF9, 0xF9, 0x33, 0xFF, 0xF9, 0xF9, 0x33, 0xFF, 0xF9, 0xF9,
+  0x3F, 0xFF, 0xF9, 0xE9, 0x3F, 0x03, 0x00, 0xC0, 0x3F, 0xFF, 0xE9, 0xFF, 0x3F, 0xFF, 0xED, 0xFF,
+  0x3F, 0xFF, 0xEC, 0xFF, 0x3F, 0xFF, 0xDC, 0xFF, 0x3F, 0xFF, 0xDE, 0xFF, 0x3F, 0x7F, 0x9E, 0xFF,
+  0x3F, 0x7F, 0x3F, 0xFF, 0x3F, 0x3F, 0x7F, 0xFE, 0x3F, 0x9F, 0x7F, 0xFC, 0x3F, 0xCF, 0xFF, 0xF8,
+  0x3F, 0xE7, 0xFF, 0xC1, 0x3F, 0xFB, 0xFF, 0xE3, 0xBF, 0xFD, 0xFF, 0xF7, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static unsigned char u8g_logo_bits4[] U8G_PROGMEM = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFE,
+  0xFF, 0xFF, 0x0F, 0xFC, 0x7F, 0x3F, 0x80, 0xFF, 0x7F, 0xC0, 0xFF, 0xFF, 0x7F, 0xFE, 0xFF, 0xFF,
+  0x7F, 0xFE, 0xFC, 0xFF, 0x7F, 0xFF, 0xF8, 0xFF, 0x3F, 0xFF, 0xFC, 0xFF, 0x3F, 0xFF, 0xFC, 0xFF,
+  0x3F, 0xFF, 0xFC, 0xFF, 0x3F, 0xFF, 0xFC, 0xFF, 0x3F, 0xFF, 0xFC, 0xF3, 0x1F, 0x00, 0x00, 0xE0,
+  0xBF, 0xFF, 0xFC, 0xFF, 0xFF, 0xFF, 0xFC, 0xFF, 0xFF, 0xFF, 0xFC, 0xFF, 0xFF, 0xF3, 0xDC, 0xFF,
+  0xFF, 0xE3, 0xBC, 0xFF, 0xFF, 0xF9, 0x7C, 0xFE, 0xFF, 0xFC, 0xFC, 0xFC, 0x7F, 0xFE, 0xFC, 0xF8,
+  0x3F, 0xFF, 0xFC, 0xF1, 0x9F, 0xFF, 0xFC, 0xF3, 0xCF, 0xFF, 0xFC, 0xF3, 0xF7, 0xF7, 0xFC, 0xF3,
+  0xFB, 0x0F, 0xFC, 0xFF, 0xFF, 0x3F, 0xFC, 0xFF, 0xFF, 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+};
+
+long timer;
+int pkj = 0;
+
+
+void draw(void) {
+  u8g.setFont(u8g_font_7x14);
+  u8g.setPrintPos(pkj, 64);
+  u8g.print("Happy Birthday");
+  u8g.drawXBMP( 0, 18, 32, 32, u8g_logo_bits1);
+  u8g.drawXBMP( 32, 18, 32, 32, u8g_logo_bits2);
+  u8g.drawXBMP( 64, 18, 32, 32, u8g_logo_bits3);
+  u8g.drawXBMP( 96, 18, 32, 32, u8g_logo_bits4);
+}
+#include <Adafruit_NeoPixel.h> //引用此文件
+#define PIN 6   //led灯控制引脚
+#define PIN_NUM 6 //允许接的led灯的个数
+#define val_max 255
+#define val_min 0
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIN_NUM, PIN, NEO_GRB + NEO_KHZ800);  //该函数第一个参数控制串联灯的个数，第二个是控制用哪个pin脚输出，第三个显示颜色和变化闪烁频率
+void setup(void) {
+  // flip screen, if required
+  // u8g.setRot180();
+  timer = millis();
+  strip.begin(); //准备对灯珠进行数据发送
+  strip.show(); //初始化LED为关的状态
+}
+void loop(void) {
+  // picture loop
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 0, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 255, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 0, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 255, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 0, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 155, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 100, 155, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 255, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 100, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 0, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 155, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 0, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 155, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 155, 100, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 100, 0, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 0, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 100, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 155, 100, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 55, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 255, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 55, 100, 195, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 0, 205, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 185, 105, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 0, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 100, 95, 155, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 255, 100, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 100, 0, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 0, 0, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 100, 0, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 155, 55, 100, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 77, 111, 111, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 98, 100, 31, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 55, 255, 175, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 194, 31, 255, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 31, 22, 198, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 98, 12, 31, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 111, 77, 111, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 31, 92, 100, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 100, 65, 174, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 215, 55, 95, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 111, 110, 205, 0.1);
+  if (millis() - timer > 2)
+  {
+    timer = millis();
+    pkj -= 2;
+    //    if(pkj<-150)
+    //      pkj=150;
+  }
+  u8g.firstPage();
+  do {
+    draw();
+  }
+  while ( u8g.nextPage() );
+  rainbowCycle( 255, 34, 55, 0.1);
+
+}
+/*“rainbowCycle( int r, int g, int b, uint8_t wait)”函数说明：
+  r：红色值（0-255）。g：绿色值（0-255）。b：蓝色值（0-255）。
+  “uint8_t wait”定义呼吸的速度，数值越小呼吸速度越快*/
+void rainbowCycle( int r, int g, int b, uint8_t wait) {
+  for (int val = 0; val < 255; val++)
+    //val由0自增到254不断循环
+  {
+    strip.setPixelColor(1, map(val, val_min, val_max, g, r), map(val, val_min, val_max, b, g), map(val, val_min, val_max, g, b));
+    strip.show();
+    strip.setPixelColor(2, map(val, val_min, val_max, b, g), map(val, val_min, val_max, g, r), map(val, val_min, val_max, r, b));
+    strip.show();
+    strip.setPixelColor(3, map(val, val_min, val_max, r, b), map(val, val_min, val_max, b, r), map(val, val_min, val_max, r, g));
+    strip.show();
+    strip.setPixelColor(4, map(val, val_min, val_max, b, r), map(val, val_min, val_max, g, b), map(val, val_min, val_max, b, g));
+    strip.show();
+    strip.setPixelColor(5, map(val, val_min, val_max, r, g), map(val, val_min, val_max, r, b), map(val, val_min, val_max, g, r));
+    strip.show();
+    strip.setPixelColor(0, map(val, val_min, val_max, g, b), map(val, val_min, val_max, r, g), map(val, val_min, val_max, b, r));
+    strip.show();
+  }
+  for (int val = 255; val >= 0; val--)  //val从255自减到0不断循环
+  {
+    strip.setPixelColor(1, map(val, val_min, val_max, g, r), map(val, val_min, val_max, r, g), map(val, val_min, val_max, r, b));
+    strip.show();
+    strip.setPixelColor(2, map(val, val_min, val_max, r, g), map(val, val_min, val_max, b, r), map(val, val_min, val_max, g, b));
+    strip.show();
+    strip.setPixelColor(3, map(val, val_min, val_max, r, b), map(val, val_min, val_max, g, r), map(val, val_min, val_max, r, g));
+    strip.show();
+    strip.setPixelColor(4, map(val, val_min, val_max, b, r), map(val, val_min, val_max, r, b), map(val, val_min, val_max, b, g));
+    strip.show();
+    strip.setPixelColor(5, map(val, val_min, val_max, b, g), map(val, val_min, val_max, g, b), map(val, val_min, val_max, g, r));
+    strip.show();
+    strip.setPixelColor(0, map(val, val_min, val_max, g, b), map(val, val_min, val_max, b, g), map(val, val_min, val_max, b, r));
+    strip.show();
+  }
+}
